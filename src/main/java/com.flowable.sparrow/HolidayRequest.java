@@ -1,15 +1,15 @@
 package com.flowable.sparrow;
 
-import org.flowable.engine.ProcessEngine;
-import org.flowable.engine.ProcessEngineConfiguration;
-import org.flowable.engine.RepositoryService;
-import org.flowable.engine.RuntimeService;
+import org.flowable.engine.*;
 import org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.engine.TaskService;
+
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -72,6 +72,32 @@ public class HolidayRequest {
         variables.put("description", description);
         ProcessInstance processInstance =
                 runtimeService.startProcessInstanceByKey("holidayRequest", variables);
+
+
+
+
+        //在Flowable中，数据库事务扮演了关键角色，用于保证数据一致性，并解决并发问题。当调用Flowable API时，默认情况下，所有操作都是同步的，并处于同一个事务下。这意味着，当方法调用返回时，会启动并提交一个事务。
+
+        //流程启动后，会有一个数据库事务从流程实例启动时持续到下一个等待状态。在这个例子里，指的是第一个用户任务。当引擎到达这个用户任务时，状态会持久化至数据库，提交事务，并返回API调用处。
+
+        //在Flowable中，当一个流程实例运行时，总会有一个数据库事务从前一个等待状态持续到下一个等待状态。数据持久化之后，可能在数据库中保存很长时间，甚至几年，直到某个API调用使流程实例继续执行。请注意当流程处在等待状态时，不会消耗任何计算或内存资源，直到下一次APi调用。
+
+        //要获得实际的任务列表，需要通过TaskService创建一个TaskQuery。
+
+        TaskService taskService = processEngine.getTaskService();
+        List<Task> tasks = taskService.createTaskQuery().taskCandidateGroup("managers").list();
+        System.out.println("You have " + tasks.size() + " tasks:");
+        for (int i=0; i<tasks.size(); i++) {
+            System.out.println((i+1) + ") " + tasks.get(i).getName());
+        }
+
+        //可以使用任务Id获取特定流程实例的变量，并在屏幕上显示实际的申请：
+        System.out.println("Which task would you like to complete?");
+        int taskIndex = Integer.valueOf(scanner.nextLine());
+        Task task = tasks.get(taskIndex - 1);
+        Map<String, Object> processVariables = taskService.getVariables(task.getId());
+        System.out.println(processVariables.get("employee") + " wants " +
+                processVariables.get("nrOfHolidays") + " of holidays. Do you approve this?");
 
     }
 }
