@@ -15,7 +15,7 @@
         <startEvent id="startEvent"/>
         <sequenceFlow sourceRef="startEvent" targetRef="approveTask"/>
 
-        <userTask id="approveTask" name="Approve or reject request"/>
+        <userTask id="approveTask" name="Approve or reject request" flowable:candidateGroups="managers"/>
         <sequenceFlow sourceRef="approveTask" targetRef="decision"/>
 
         <exclusiveGateway id="decision"/>
@@ -38,7 +38,7 @@
                      flowable:class="org.flowable.CallExternalSystemDelegate"/>
         <sequenceFlow sourceRef="externalSystemCall" targetRef="holidayApprovedTask"/>
 
-        <userTask id="holidayApprovedTask" name="Holiday approved"/>
+        <userTask id="holidayApprovedTask" name="Holiday approved" flowable:assignee="${employee}"/>
         <sequenceFlow sourceRef="holidayApprovedTask" targetRef="approveEnd"/>
 
         <serviceTask id="sendRejectionMail" name="Send out rejection email"

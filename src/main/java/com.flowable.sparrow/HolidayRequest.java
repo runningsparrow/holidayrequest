@@ -6,6 +6,7 @@ import org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
+//import org.flowable.bpmn.model.Task;
 import org.flowable.task.api.Task;
 
 import java.util.HashMap;
@@ -73,7 +74,9 @@ public class HolidayRequest {
         variables.put("description", description);
         ProcessInstance processInstance =
                 runtimeService.startProcessInstanceByKey("holidayRequest", variables);
-
+        System.out.println("===============");
+        System.out.println(variables);
+        System.out.println("===============");
 
 
 
