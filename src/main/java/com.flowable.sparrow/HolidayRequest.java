@@ -109,7 +109,7 @@ public class HolidayRequest {
         variables.put("approved", approved);
         taskService.complete(task.getId(), variables);
 
-
+        //使用历史数据
         //选择使用Flowable这样的流程引擎的原因之一，是它可以自动存储所有流程实例的审计数据或历史数据。这些数据可以用于创建报告，深入展现组织运行的情况，瓶颈在哪里，等等。
         HistoryService historyService = processEngine.getHistoryService();
         List<HistoricActivityInstance> activities =

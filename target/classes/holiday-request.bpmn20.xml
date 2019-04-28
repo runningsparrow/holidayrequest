@@ -34,8 +34,9 @@
             </conditionExpression>
         </sequenceFlow>
 
+        <!--此处class的包名改成自己定义的包名-->
         <serviceTask id="externalSystemCall" name="Enter holidays in external system"
-                     flowable:class="org.flowable.CallExternalSystemDelegate"/>
+                     flowable:class="com.flowable.sparrow.CallExternalSystemDelegate"/>
         <sequenceFlow sourceRef="externalSystemCall" targetRef="holidayApprovedTask"/>
 
         <userTask id="holidayApprovedTask" name="Holiday approved" flowable:assignee="${employee}"/>
